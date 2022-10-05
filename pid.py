@@ -6,6 +6,8 @@ from copy import copy
 import time
 import math
 
+import numpy as np
+
 
 class PIDController:
     class PIDState:
@@ -141,6 +143,8 @@ def init():
 
 
 def plotter():
+    max_abs_error = max([max_err_0, max_err_1, max_err_2])*1.1
+
     fig, axs = plt.subplots(2, 3, constrained_layout=True, figsize=(18, 10))
     axs[0, 0].set_title("Ideal With Noise")
     # axs[0, 0].plot(x, inputs0, 'b', label='Inputs', alpha=.5)
@@ -150,12 +154,15 @@ def plotter():
     axs[0, 0].plot(x, [0] * len(x), 'k--')
     axs[0, 0].plot(max_err_0x, max_err_0y, 'kx')
     axs[0, 0].grid()
-    axs[1, 0].set_title("Error")
+
+    axs[1, 0].set_title(f"Error (max {round(max_err_0)})")
     axs[1, 0].plot(x, [a - t for a, t in zip(actuals0, targets)], 'b', label='Error', alpha=.5)
     # ax0.plot(x, outputs0, 'ro', label='Outputs', alpha=.5)
     axs[1, 0].plot(x, [0] * len(x), 'k--')
-    axs[1, 0].plot(max_err_0x, max_err_0, 'kx')
+    axs[1, 0].plot([max_err_0x]*10, np.linspace(-max_err_0, max_err_0, 10), 'b--')
+    axs[1, 0].set_ylim([-max_abs_error, max_abs_error])
     axs[1, 0].grid()
+
     axs[0, 1].set_title('"Faster Than Expected" with Noise')
     # axs[0,1].plot(x, inputs1, 'b', label='Inputs', alpha=.5)
     # ax1.plot(x, outputs1, 'ro', label='Outputs', alpha=.5)
@@ -164,12 +171,15 @@ def plotter():
     axs[0, 1].plot(x, [0] * len(x), 'k--')
     axs[0, 1].plot(max_err_1x, max_err_1y, 'kx')
     axs[0, 1].grid()
-    axs[1, 1].set_title("Error")
+
+    axs[1, 1].set_title(f"Error (max {round(max_err_1)})")
     axs[1, 1].plot(x, [a - t for a, t in zip(actuals1, targets)], 'b', label='Error', alpha=.5)
     # ax0.plot(x, outputs0, 'ro', label='Outputs', alpha=.5)
     axs[1, 1].plot(x, [0] * len(x), 'k--')
-    axs[1, 1].plot(max_err_1x, max_err_1, 'kx')
+    axs[1, 1].plot([max_err_1x]*10, np.linspace(-max_err_1, max_err_1, 10), 'b--')
+    axs[1, 1].set_ylim([-max_abs_error, max_abs_error])
     axs[1, 1].grid()
+
     axs[0, 2].set_title('"Slower Than Expected" with Noise')
     # axs[0,2].plot(x, inputs2, 'b', label='Inputs', alpha=.5)
     # ax2.plot(x, outputs2, 'ro', label='Outputs', alpha=.5)
@@ -178,11 +188,13 @@ def plotter():
     axs[0, 2].plot(x, [0] * len(x), 'k--')
     axs[0, 2].plot(max_err_2x, max_err_2y, 'kx')
     axs[0, 2].grid()
-    axs[1, 2].set_title("Error")
+
+    axs[1, 2].set_title(f"Error (max {round(max_err_2)})")
     axs[1, 2].plot(x, [a - t for a, t in zip(actuals2, targets)], 'b', label='Error', alpha=.5)
     # ax0.plot(x, outputs0, 'ro', label='Outputs', alpha=.5)
     axs[1, 2].plot(x, [0] * len(x), 'k--')
-    axs[1, 2].plot(max_err_2x, max_err_2, 'kx')
+    axs[1, 2].plot([max_err_2x]*10, np.linspace(-max_err_2, max_err_2, 10), 'b--')
+    axs[1, 2].set_ylim([-max_abs_error, max_abs_error])
     axs[1, 2].grid()
     # plt.legend('Inputs', 'Outputs', 'Actual', 'Target')
     axs[0, 2].legend()
@@ -234,7 +246,7 @@ if __name__ == '__main__':
     # P = .8
     # I = .01
     # D = .05
-    P = 0.05
+    P = 0.025
     I = 0.001
     D = 0.0001
 
